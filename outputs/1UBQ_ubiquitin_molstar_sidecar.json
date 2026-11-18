@@ -1,0 +1,154 @@
+{
+  "load_structure": {
+    "id": "1UBQ_ubiquitin.pdb",
+    "source": "artifact"
+  },
+  "set_overlays": {
+    "confidence": false,
+    "annotations": true
+  },
+  "annotations": [
+    {
+      "tool": "annotate_region",
+      "arguments": {
+        "residues": [
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 8,
+            "end_auth_seq_id": 8
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 36,
+            "end_auth_seq_id": 36
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 70,
+            "end_auth_seq_id": 71
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 73,
+            "end_auth_seq_id": 73
+          }
+        ],
+        "color": "#dc2626",
+        "text": "Aggregation Hot-Spots (Red): L8, I36, V70, L71, L73 | SapScore=16.91, Max SAP=0.309"
+      }
+    },
+    {
+      "tool": "annotate_region",
+      "arguments": {
+        "residues": [
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 1,
+            "end_auth_seq_id": 1
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 3,
+            "end_auth_seq_id": 3
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 5,
+            "end_auth_seq_id": 5
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 13,
+            "end_auth_seq_id": 13
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 15,
+            "end_auth_seq_id": 15
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 17,
+            "end_auth_seq_id": 17
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 23,
+            "end_auth_seq_id": 23
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 26,
+            "end_auth_seq_id": 27
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 30,
+            "end_auth_seq_id": 30
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 43,
+            "end_auth_seq_id": 43
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 50,
+            "end_auth_seq_id": 50
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 56,
+            "end_auth_seq_id": 56
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 59,
+            "end_auth_seq_id": 59
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 61,
+            "end_auth_seq_id": 61
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 65,
+            "end_auth_seq_id": 65
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 67,
+            "end_auth_seq_id": 67
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 69,
+            "end_auth_seq_id": 69
+          }
+        ],
+        "color": "#2563eb",
+        "text": "Stable Buried Core (Blue): M1, I3, V5, I13, L15, V17, I23, V26 (+10 more) | Packing=0.98, BUNS=3"
+      }
+    },
+    {
+      "tool": "annotate_region",
+      "arguments": {
+        "residues": [
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 11,
+            "end_auth_seq_id": 11
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 41,
+            "end_auth_seq_id": 41
+          }
+        ],
+        "color": "#f97316",
+        "text": "Destabilized / Clash / BUNS Sites (Orange): K11, Q41"
+      }
+    }
+  ]
+}

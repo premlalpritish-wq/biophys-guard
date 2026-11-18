@@ -1,0 +1,539 @@
+{
+  "load_structure": {
+    "id": "AF_P04637_p53.cif",
+    "source": "artifact"
+  },
+  "set_overlays": {
+    "confidence": true,
+    "annotations": true
+  },
+  "annotations": [
+    {
+      "tool": "annotate_region",
+      "arguments": {
+        "residues": [
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 10,
+            "end_auth_seq_id": 10
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 12,
+            "end_auth_seq_id": 14
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 19,
+            "end_auth_seq_id": 19
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 22,
+            "end_auth_seq_id": 23
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 25,
+            "end_auth_seq_id": 27
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 31,
+            "end_auth_seq_id": 32
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 34,
+            "end_auth_seq_id": 36
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 43,
+            "end_auth_seq_id": 45
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 50,
+            "end_auth_seq_id": 50
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 53,
+            "end_auth_seq_id": 54
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 63,
+            "end_auth_seq_id": 64
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 66,
+            "end_auth_seq_id": 67
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 70,
+            "end_auth_seq_id": 80
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 82,
+            "end_auth_seq_id": 89
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 91,
+            "end_auth_seq_id": 93
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 103,
+            "end_auth_seq_id": 103
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 114,
+            "end_auth_seq_id": 114
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 128,
+            "end_auth_seq_id": 129
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 152,
+            "end_auth_seq_id": 153
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 188,
+            "end_auth_seq_id": 188
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 201,
+            "end_auth_seq_id": 201
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 212,
+            "end_auth_seq_id": 212
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 225,
+            "end_auth_seq_id": 225
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 243,
+            "end_auth_seq_id": 243
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 276,
+            "end_auth_seq_id": 276
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 289,
+            "end_auth_seq_id": 289
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 299,
+            "end_auth_seq_id": 301
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 308,
+            "end_auth_seq_id": 309
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 323,
+            "end_auth_seq_id": 323
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 327,
+            "end_auth_seq_id": 328
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 330,
+            "end_auth_seq_id": 330
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 338,
+            "end_auth_seq_id": 338
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 341,
+            "end_auth_seq_id": 341
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 344,
+            "end_auth_seq_id": 344
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 348,
+            "end_auth_seq_id": 348
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 350,
+            "end_auth_seq_id": 350
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 369,
+            "end_auth_seq_id": 369
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 383,
+            "end_auth_seq_id": 385
+          }
+        ],
+        "color": "#dc2626",
+        "text": "Aggregation Hot-Spots (Red): V10, P12, P13, L14, F19, L22, W23, L25 (+70 more) | SapScore=231.96, Max SAP=0.525"
+      }
+    },
+    {
+      "tool": "annotate_region",
+      "arguments": {
+        "residues": [
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 95,
+            "end_auth_seq_id": 95
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 108,
+            "end_auth_seq_id": 109
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 112,
+            "end_auth_seq_id": 113
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 124,
+            "end_auth_seq_id": 125
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 127,
+            "end_auth_seq_id": 127
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 132,
+            "end_auth_seq_id": 135
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 141,
+            "end_auth_seq_id": 141
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 143,
+            "end_auth_seq_id": 143
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 145,
+            "end_auth_seq_id": 145
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 147,
+            "end_auth_seq_id": 147
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 151,
+            "end_auth_seq_id": 151
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 155,
+            "end_auth_seq_id": 155
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 157,
+            "end_auth_seq_id": 157
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 159,
+            "end_auth_seq_id": 159
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 161,
+            "end_auth_seq_id": 163
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 172,
+            "end_auth_seq_id": 173
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 189,
+            "end_auth_seq_id": 189
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 193,
+            "end_auth_seq_id": 195
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 197,
+            "end_auth_seq_id": 197
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 205,
+            "end_auth_seq_id": 205
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 213,
+            "end_auth_seq_id": 218
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 220,
+            "end_auth_seq_id": 220
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 229,
+            "end_auth_seq_id": 230
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 232,
+            "end_auth_seq_id": 232
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 234,
+            "end_auth_seq_id": 237
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 240,
+            "end_auth_seq_id": 240
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 242,
+            "end_auth_seq_id": 242
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 245,
+            "end_auth_seq_id": 246
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 252,
+            "end_auth_seq_id": 258
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 266,
+            "end_auth_seq_id": 266
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 269,
+            "end_auth_seq_id": 272
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 274,
+            "end_auth_seq_id": 274
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 278,
+            "end_auth_seq_id": 279
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 281,
+            "end_auth_seq_id": 282
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 332,
+            "end_auth_seq_id": 332
+          }
+        ],
+        "color": "#2563eb",
+        "text": "Stable Buried Core (Blue): S95, G108, F109, G112, F113, C124, T125, S127 (+59 more) | Packing=0.95, BUNS=16"
+      }
+    },
+    {
+      "tool": "annotate_region",
+      "arguments": {
+        "residues": [
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 4,
+            "end_auth_seq_id": 5
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 8,
+            "end_auth_seq_id": 9
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 17,
+            "end_auth_seq_id": 17
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 21,
+            "end_auth_seq_id": 21
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 55,
+            "end_auth_seq_id": 56
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 58,
+            "end_auth_seq_id": 58
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 60,
+            "end_auth_seq_id": 62
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 69,
+            "end_auth_seq_id": 69
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 107,
+            "end_auth_seq_id": 107
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 111,
+            "end_auth_seq_id": 111
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 149,
+            "end_auth_seq_id": 149
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 170,
+            "end_auth_seq_id": 170
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 174,
+            "end_auth_seq_id": 176
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 185,
+            "end_auth_seq_id": 185
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 192,
+            "end_auth_seq_id": 192
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 196,
+            "end_auth_seq_id": 196
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 203,
+            "end_auth_seq_id": 203
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 238,
+            "end_auth_seq_id": 239
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 251,
+            "end_auth_seq_id": 251
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 267,
+            "end_auth_seq_id": 267
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 275,
+            "end_auth_seq_id": 275
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 291,
+            "end_auth_seq_id": 291
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 306,
+            "end_auth_seq_id": 306
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 314,
+            "end_auth_seq_id": 314
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 316,
+            "end_auth_seq_id": 316
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 375,
+            "end_auth_seq_id": 380
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 390,
+            "end_auth_seq_id": 390
+          }
+        ],
+        "color": "#f97316",
+        "text": "Destabilized / Clash / BUNS Sites (Orange): P4, Q5, P8, S9, E17, D21, T55, E56"
+      }
+    }
+  ]
+}

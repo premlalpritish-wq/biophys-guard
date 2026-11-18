@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biophys-guard 3D Report — 7JZL_LCB1_cb_stub.pdb</title>
+  <script src="https://unpkg.com/ngl@2.3.1/dist/ngl.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      grid-template-rows: auto 1fr;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: #020617;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 12px;
+      background: #64748b;
+      color: white;
+      letter-spacing: 0.04em;
+    }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+    button {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    button:hover { background: #334155; }
+    button.active { border-color: #60a5fa; background: #1d4ed8; }
+    #viewport-wrap { position: relative; height: 100%; background: #090d16; }
+    #viewport { width: 100%; height: 100%; }
+    #offline-msg {
+      display: none;
+      position: absolute;
+      inset: 20px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .legend {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .leg-item { display: flex; align-items: center; gap: 8px; }
+    .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+    aside {
+      overflow-y: auto;
+      padding: 16px 18px;
+      background: var(--bg);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+    .kpi-val { font-size: 16px; font-weight: 700; margin-top: 4px; }
+    h3 { margin: 0 0 8px 0; font-size: 13px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.05em; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    tr.clickable:hover { background: #334155; cursor: pointer; }
+    .pill {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <strong>biophys-guard</strong>
+      <span style="color: var(--muted); font-size: 13px;">7JZL_LCB1_cb_stub.pdb (Experimental)</span>
+      <span class="badge">INVALID_BACKBONE_ONLY · G:0 A:0 R:0</span>
+    </div>
+    <div class="toolbar">
+      <button id="btn-cat" class="active" onclick="setColorMode('categorical')">Risk Categories</button>
+      <button id="btn-bfac" onclick="setColorMode('spectrum')">B-Factor Spectrum</button>
+      <button id="btn-surf" class="active" onclick="toggleHotspotSurface()">Hotspot Surface</button>
+      <button id="btn-spin" onclick="toggleSpin()">Spin</button>
+      <button onclick="stage && stage.autoView(600)">Reset View</button>
+    </div>
+  </header>
+
+  <div id="viewport-wrap">
+    <div id="viewport"></div>
+    <div id="offline-msg">NGL.js WebGL library could not load from CDN (offline mode). Use the generated PyMOL script (_overlay.pml) or Antigravity Mol* Biomolecular Structure Viewer sidecar, and review the quantitative tables on the right.</div>
+    <div class="legend">
+      <div class="leg-item"><span class="swatch" style="background:#dc2626"></span>Aggregation Hot-spot (SAP &ge; 0.15)</div>
+      <div class="leg-item"><span class="swatch" style="background:#f97316"></span>Destabilized / Clash / Atomic BUNS</div>
+      <div class="leg-item"><span class="swatch" style="background:#e2e8f0"></span>Neutral Surface</div>
+      <div class="leg-item"><span class="swatch" style="background:#2563eb"></span>Stable Buried Core</div>
+    </div>
+  </div>
+
+  <aside>
+    <div class="kpis">
+      <div class="card"><div class="kpi-label">Coventry SAP Score</div><div class="kpi-val">N/A</div></div>
+      <div class="card"><div class="kpi-label">Max SAP (R=5&Aring;)</div><div class="kpi-val">N/A</div></div>
+      <div class="card"><div class="kpi-label">Atomic BUNS / Clash</div><div class="kpi-val">0 / 0</div></div>
+      <div class="card"><div class="kpi-label">Net Q (pH 7.4) / pI</div><div class="kpi-val">+0.0 / 7.0</div></div>
+      <div class="card"><div class="kpi-label">Dipole (CoM)</div><div class="kpi-val">0.0 D</div></div>
+      <div class="card"><div class="kpi-label">Stability</div><div class="kpi-val">N/A</div></div>
+    </div>
+
+    <div class="card">
+      <h3>Traffic-Light Gate Checks</h3>
+      <div id="gates-box"></div>
+    </div>
+
+    <div class="card">
+      <h3>Hydrophobic Patches (0)</h3>
+      <div id="patches-box"></div>
+    </div>
+
+    <div class="card">
+      <h3>Variant Predictions (none)</h3>
+      <div id="variants-box"></div>
+    </div>
+
+    <div class="card">
+      <h3>Per-Residue Risk Profile (click row to focus)</h3>
+      <div style="max-height: 240px; overflow-y: auto;">
+        <table>
+          <thead><tr><th>Residue</th><th>SAP</th><th>rSASA</th><th>BUNS/Clash</th><th>Category</th></tr></thead>
+          <tbody id="res-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </aside>
+
+  <script id="pdb-data" type="text/plain">REMARK   1 GENERATED BY BIOPHYS-GUARD FROM 7JZL_LCB1_cb_stub.pdb
+REMARK   2 B-FACTOR ENCODES SIGNED BIOPHYSICAL RISK SCORE [-99.99..+99.99]
+REMARK   3 -99.99 = STABLE CORE (BLUE), 0 = NEUTRAL, +99.99 = AGGREGATION HOTSPOT (RED)
+ATOM      1  N   ASP E   1     203.722 176.383 266.229  1.00  0.00           N
+ATOM      2  CA  ASP E   1     204.195 177.403 267.166  1.00  0.00           C
+ATOM      3  C   ASP E   1     203.503 178.758 266.947  1.00  0.00           C
+ATOM      4  O   ASP E   1     203.190 179.456 267.917  1.00  0.00           O
+ATOM      5  CB  ASP E   1     205.735 177.569 267.064  1.00  0.00           C
+ATOM      6  N   LYS E   2     203.256 179.120 265.671  1.00  0.00           N
+ATOM      7  CA  LYS E   2     202.628 180.388 265.270  1.00  0.00           C
+ATOM      8  C   LYS E   2     201.242 180.552 265.886  1.00  0.00           C
+ATOM      9  O   LYS E   2     200.845 181.652 266.274  1.00  0.00           O
+ATOM     10  CB  LYS E   2     202.531 180.476 263.745  1.00  0.00           C
+ATOM     11  N   GLU E   3     200.518 179.443 265.978  1.00  0.00           N
+ATOM     12  CA  GLU E   3     199.180 179.439 266.543  1.00  0.00           C
+ATOM     13  C   GLU E   3     199.199 179.819 268.018  1.00  0.00           C
+ATOM     14  O   GLU E   3     198.291 180.497 268.505  1.00  0.00           O
+ATOM     15  CB  GLU E   3     198.552 178.060 266.371  1.00  0.00           C
+ATOM     16  N   TRP E   4     200.225 179.360 268.733  1.00  0.00           N
+ATOM     17  CA  TRP E   4     200.333 179.638 270.154  1.00  0.00           C
+ATOM     18  C   TRP E   4     200.748 181.076 270.375  1.00  0.00           C
+ATOM     19  O   TRP E   4     200.307 181.719 271.324  1.00  0.00           O
+ATOM     20  CB  TRP E   4     201.324 178.686 270.809  1.00  0.00           C
+ATOM     21  N   ILE E   5     201.558 181.592 269.463  1.00  0.00           N
+ATOM     22  CA  ILE E   5     201.998 182.968 269.560  1.00  0.00           C
+ATOM     23  C   ILE E   5     200.822 183.909 269.383  1.00  0.00           C
+ATOM     24  O   ILE E   5     200.681 184.880 270.128  1.00  0.00           O
+ATOM     25  CB  ILE E   5     203.079 183.278 268.531  1.00  0.00           C
+ATOM     26  N   LEU E   6     199.971 183.626 268.396  1.00  0.00           N
+ATOM     27  CA  LEU E   6     198.801 184.457 268.169  1.00  0.00           C
+ATOM     28  C   LEU E   6     197.904 184.444 269.395  1.00  0.00           C
+ATOM     29  O   LEU E   6     197.393 185.489 269.806  1.00  0.00           O
+ATOM     30  CB  LEU E   6     198.010 183.962 266.949  1.00  0.00           C
+ATOM     31  N   GLN E   7     197.729 183.268 269.997  1.00  0.00           N
+ATOM     32  CA  GLN E   7     196.886 183.167 271.173  1.00  0.00           C
+ATOM     33  C   GLN E   7     197.453 183.967 272.336  1.00  0.00           C
+ATOM     34  O   GLN E   7     196.704 184.628 273.056  1.00  0.00           O
+ATOM     35  CB  GLN E   7     196.748 181.707 271.598  1.00  0.00           C
+ATOM     36  N   LYS E   8     198.774 183.941 272.506  1.00  0.00           N
+ATOM     37  CA  LYS E   8     199.388 184.686 273.592  1.00  0.00           C
+ATOM     38  C   LYS E   8     199.248 186.190 273.402  1.00  0.00           C
+ATOM     39  O   LYS E   8     198.932 186.904 274.351  1.00  0.00           O
+ATOM     40  CB  LYS E   8     200.860 184.310 273.741  1.00  0.00           C
+ATOM     41  N   ILE E   9     199.440 186.677 272.177  1.00  0.00           N
+ATOM     42  CA  ILE E   9     199.349 188.113 271.953  1.00  0.00           C
+ATOM     43  C   ILE E   9     197.905 188.557 272.203  1.00  0.00           C
+ATOM     44  O   ILE E   9     197.664 189.611 272.796  1.00  0.00           O
+ATOM     45  CB  ILE E   9     199.802 188.525 270.537  1.00  0.00           C
+ATOM     46  N   TYR E  10     196.951 187.753 271.724  1.00  0.00           N
+ATOM     47  CA  TYR E  10     195.528 188.008 271.915  1.00  0.00           C
+ATOM     48  C   TYR E  10     195.199 188.141 273.401  1.00  0.00           C
+ATOM     49  O   TYR E  10     194.539 189.093 273.822  1.00  0.00           O
+ATOM     50  CB  TYR E  10     194.709 186.878 271.286  1.00  0.00           C
+ATOM     51  N   GLU E  11     195.687 187.197 274.202  1.00  0.00           N
+ATOM     52  CA  GLU E  11     195.450 187.221 275.639  1.00  0.00           C
+ATOM     53  C   GLU E  11     196.080 188.444 276.296  1.00  0.00           C
+ATOM     54  O   GLU E  11     195.516 189.006 277.236  1.00  0.00           O
+ATOM     55  CB  GLU E  11     195.977 185.938 276.278  1.00  0.00           C
+ATOM     56  N   ILE E  12     197.234 188.872 275.794  1.00  0.00           N
+ATOM     57  CA  ILE E  12     197.882 190.048 276.352  1.00  0.00           C
+ATOM     58  C   ILE E  12     197.033 191.297 276.152  1.00  0.00           C
+ATOM     59  O   ILE E  12     196.842 192.063 277.098  1.00  0.00           O
+ATOM     60  CB  ILE E  12     199.292 190.252 275.768  1.00  0.00           C
+ATOM     61  N   MET E  13     196.498 191.521 274.947  1.00  0.00           N
+ATOM     62  CA  MET E  13     195.695 192.733 274.794  1.00  0.00           C
+ATOM     63  C   MET E  13     194.401 192.616 275.589  1.00  0.00           C
+ATOM     64  O   MET E  13     193.897 193.613 276.108  1.00  0.00           O
+ATOM     65  CB  MET E  13     195.367 193.047 273.330  1.00  0.00           C
+ATOM     66  N   ARG E  14     193.871 191.399 275.720  1.00  0.00           N
+ATOM     67  CA  ARG E  14     192.636 191.235 276.464  1.00  0.00           C
+ATOM     68  C   ARG E  14     192.860 191.652 277.912  1.00  0.00           C
+ATOM     69  O   ARG E  14     192.051 192.380 278.494  1.00  0.00           O
+ATOM     70  CB  ARG E  14     192.132 189.800 276.387  1.00  0.00           C
+ATOM     71  N   LEU E  15     193.989 191.227 278.473  1.00  0.00           N
+ATOM     72  CA  LEU E  15     194.342 191.572 279.838  1.00  0.00           C
+ATOM     73  C   LEU E  15     194.562 193.070 280.004  1.00  0.00           C
+ATOM     74  O   LEU E  15     194.143 193.651 281.001  1.00  0.00           O
+ATOM     75  CB  LEU E  15     195.597 190.806 280.271  1.00  0.00           C
+ATOM     76  N   LEU E  16     195.212 193.702 279.034  1.00  0.00           N
+ATOM     77  CA  LEU E  16     195.481 195.130 279.130  1.00  0.00           C
+ATOM     78  C   LEU E  16     194.186 195.946 279.179  1.00  0.00           C
+ATOM     79  O   LEU E  16     194.126 196.973 279.864  1.00  0.00           O
+ATOM     80  CB  LEU E  16     196.383 195.559 277.973  1.00  0.00           C
+ATOM     81  N   ASP E  17     193.136 195.482 278.490  1.00  0.00           N
+ATOM     82  CA  ASP E  17     191.846 196.159 278.606  1.00  0.00           C
+ATOM     83  C   ASP E  17     191.305 195.989 280.025  1.00  0.00           C
+ATOM     84  O   ASP E  17     190.856 196.953 280.645  1.00  0.00           O
+ATOM     85  CB  ASP E  17     190.807 195.582 277.627  1.00  0.00           C
+ATOM     86  N   GLU E  18     191.417 194.774 280.563  1.00  0.00           N
+ATOM     87  CA  GLU E  18     190.927 194.474 281.911  1.00  0.00           C
+ATOM     88  C   GLU E  18     191.667 195.264 282.985  1.00  0.00           C
+ATOM     89  O   GLU E  18     191.077 195.664 283.990  1.00  0.00           O
+ATOM     90  CB  GLU E  18     191.042 192.979 282.218  1.00  0.00           C
+ATOM     91  N   LEU E  19     192.950 195.512 282.758  1.00  0.00           N
+ATOM     92  CA  LEU E  19     193.781 196.235 283.711  1.00  0.00           C
+ATOM     93  C   LEU E  19     193.559 197.748 283.662  1.00  0.00           C
+ATOM     94  O   LEU E  19     194.129 198.480 284.472  1.00  0.00           O
+ATOM     95  CB  LEU E  19     195.271 195.952 283.452  1.00  0.00           C
+ATOM     96  N   GLY E  20     192.749 198.228 282.715  1.00  0.00           N
+ATOM     97  CA  GLY E  20     192.492 199.659 282.606  1.00  0.00           C
+ATOM     98  C   GLY E  20     193.576 200.436 281.861  1.00  0.00           C
+ATOM     99  O   GLY E  20     193.761 201.629 282.104  1.00  0.00           O
+ATOM    100  N   HIS E  21     194.290 199.774 280.953  1.00  0.00           N
+ATOM    101  CA  HIS E  21     195.342 200.426 280.181  1.00  0.00           C
+ATOM    102  C   HIS E  21     195.067 200.250 278.701  1.00  0.00           C
+ATOM    103  O   HIS E  21     195.692 199.437 278.017  1.00  0.00           O
+ATOM    104  CB  HIS E  21     196.710 199.859 280.553  1.00  0.00           C
+ATOM    105  N   ALA E  22     194.088 201.006 278.220  1.00  0.00           N
+ATOM    106  CA  ALA E  22     193.604 200.866 276.860  1.00  0.00           C
+ATOM    107  C   ALA E  22     194.661 201.191 275.824  1.00  0.00           C
+ATOM    108  O   ALA E  22     194.675 200.583 274.759  1.00  0.00           O
+ATOM    109  CB  ALA E  22     192.409 201.750 276.642  1.00  0.00           C
+ATOM    110  N   GLU E  23     195.529 202.162 276.099  1.00  0.00           N
+ATOM    111  CA  GLU E  23     196.527 202.521 275.100  1.00  0.00           C
+ATOM    112  C   GLU E  23     197.462 201.359 274.843  1.00  0.00           C
+ATOM    113  O   GLU E  23     197.822 201.073 273.700  1.00  0.00           O
+ATOM    114  CB  GLU E  23     197.325 203.750 275.517  1.00  0.00           C
+ATOM    115  N   ALA E  24     197.859 200.684 275.916  1.00  0.00           N
+ATOM    116  CA  ALA E  24     198.730 199.535 275.789  1.00  0.00           C
+ATOM    117  C   ALA E  24     198.026 198.437 275.006  1.00  0.00           C
+ATOM    118  O   ALA E  24     198.639 197.779 274.163  1.00  0.00           O
+ATOM    119  CB  ALA E  24     199.146 199.043 277.160  1.00  0.00           C
+ATOM    120  N   SER E  25     196.726 198.259 275.254  1.00  0.00           N
+ATOM    121  CA  SER E  25     195.967 197.246 274.537  1.00  0.00           C
+ATOM    122  C   SER E  25     195.920 197.546 273.049  1.00  0.00           C
+ATOM    123  O   SER E  25     196.095 196.648 272.224  1.00  0.00           O
+ATOM    124  CB  SER E  25     194.555 197.140 275.059  1.00  0.00           C
+ATOM    125  N   MET E  26     195.681 198.810 272.704  1.00  0.00           N
+ATOM    126  CA  MET E  26     195.618 199.228 271.309  1.00  0.00           C
+ATOM    127  C   MET E  26     196.936 198.929 270.601  1.00  0.00           C
+ATOM    128  O   MET E  26     196.946 198.417 269.480  1.00  0.00           O
+ATOM    129  CB  MET E  26     195.297 200.720 271.219  1.00  0.00           C
+ATOM    130  N   ARG E  27     198.049 199.236 271.267  1.00  0.00           N
+ATOM    131  CA  ARG E  27     199.366 198.983 270.703  1.00  0.00           C
+ATOM    132  C   ARG E  27     199.585 197.486 270.470  1.00  0.00           C
+ATOM    133  O   ARG E  27     200.110 197.080 269.431  1.00  0.00           O
+ATOM    134  CB  ARG E  27     200.439 199.560 271.607  1.00  0.00           C
+ATOM    135  N   VAL E  28     199.161 196.661 271.422  1.00  0.00           N
+ATOM    136  CA  VAL E  28     199.299 195.223 271.249  1.00  0.00           C
+ATOM    137  C   VAL E  28     198.418 194.725 270.104  1.00  0.00           C
+ATOM    138  O   VAL E  28     198.846 193.889 269.310  1.00  0.00           O
+ATOM    139  CB  VAL E  28     199.004 194.458 272.550  1.00  0.00           C
+ATOM    140  N   SER E  29     197.204 195.251 269.990  1.00  0.00           N
+ATOM    141  CA  SER E  29     196.333 194.836 268.900  1.00  0.00           C
+ATOM    142  C   SER E  29     197.027 195.049 267.555  1.00  0.00           C
+ATOM    143  O   SER E  29     197.020 194.163 266.697  1.00  0.00           O
+ATOM    144  CB  SER E  29     195.032 195.604 268.931  1.00  0.00           C
+ATOM    145  N   ASP E  30     197.710 196.185 267.400  1.00  0.00           N
+ATOM    146  CA  ASP E  30     198.468 196.430 266.175  1.00  0.00           C
+ATOM    147  C   ASP E  30     199.514 195.336 265.937  1.00  0.00           C
+ATOM    148  O   ASP E  30     199.754 194.950 264.789  1.00  0.00           O
+ATOM    149  CB  ASP E  30     199.157 197.798 266.212  1.00  0.00           C
+ATOM    150  N   LEU E  31     200.107 194.810 267.018  1.00  0.00           N
+ATOM    151  CA  LEU E  31     201.087 193.732 266.890  1.00  0.00           C
+ATOM    152  C   LEU E  31     200.407 192.482 266.327  1.00  0.00           C
+ATOM    153  O   LEU E  31     201.021 191.723 265.581  1.00  0.00           O
+ATOM    154  CB  LEU E  31     201.734 193.377 268.248  1.00  0.00           C
+ATOM    155  N   ILE E  32     199.132 192.269 266.683  1.00  0.00           N
+ATOM    156  CA  ILE E  32     198.404 191.107 266.174  1.00  0.00           C
+ATOM    157  C   ILE E  32     198.203 191.210 264.682  1.00  0.00           C
+ATOM    158  O   ILE E  32     198.435 190.247 263.954  1.00  0.00           O
+ATOM    159  CB  ILE E  32     197.010 190.936 266.815  1.00  0.00           C
+ATOM    160  N   TYR E  33     197.756 192.373 264.225  1.00  0.00           N
+ATOM    161  CA  TYR E  33     197.529 192.530 262.800  1.00  0.00           C
+ATOM    162  C   TYR E  33     198.799 192.255 262.015  1.00  0.00           C
+ATOM    163  O   TYR E  33     198.782 191.508 261.039  1.00  0.00           O
+ATOM    164  CB  TYR E  33     197.000 193.913 262.450  1.00  0.00           C
+ATOM    165  N   GLU E  34     199.906 192.864 262.438  1.00  0.00           N
+ATOM    166  CA  GLU E  34     201.166 192.658 261.740  1.00  0.00           C
+ATOM    167  C   GLU E  34     201.598 191.193 261.803  1.00  0.00           C
+ATOM    168  O   GLU E  34     202.049 190.629 260.809  1.00  0.00           O
+ATOM    169  CB  GLU E  34     202.259 193.552 262.323  1.00  0.00           C
+ATOM    170  N   PHE E  35     201.431 190.565 262.966  1.00  0.00           N
+ATOM    171  CA  PHE E  35     201.815 189.170 263.155  1.00  0.00           C
+ATOM    172  C   PHE E  35     201.098 188.257 262.184  1.00  0.00           C
+ATOM    173  O   PHE E  35     201.710 187.393 261.564  1.00  0.00           O
+ATOM    174  CB  PHE E  35     201.543 188.714 264.592  1.00  0.00           C
+ATOM    175  N   MET E  36     199.800 188.457 262.019  1.00  0.00           N
+ATOM    176  CA  MET E  36     199.009 187.601 261.144  1.00  0.00           C
+ATOM    177  C   MET E  36     199.400 187.710 259.664  1.00  0.00           C
+ATOM    178  O   MET E  36     198.916 186.935 258.838  1.00  0.00           O
+ATOM    179  CB  MET E  36     197.528 187.915 261.313  1.00  0.00           C
+ATOM    180  N   LYS E  37     200.254 188.676 259.325  1.00  0.00           N
+ATOM    181  CA  LYS E  37     200.714 188.873 257.958  1.00  0.00           C
+ATOM    182  C   LYS E  37     202.186 188.479 257.780  1.00  0.00           C
+ATOM    183  O   LYS E  37     202.727 188.581 256.677  1.00  0.00           O
+ATOM    184  CB  LYS E  37     200.542 190.341 257.552  1.00  0.00           C
+ATOM    185  N   LYS E  38     202.848 188.091 258.874  1.00  0.00           N
+ATOM    186  CA  LYS E  38     204.288 187.840 258.851  1.00  0.00           C
+ATOM    187  C   LYS E  38     204.726 186.592 259.622  1.00  0.00           C
+ATOM    188  O   LYS E  38     203.974 186.012 260.401  1.00  0.00           O
+ATOM    189  CB  LYS E  38     205.043 189.053 259.399  1.00  0.00           C
+ATOM    190  N   GLY E  39     205.976 186.187 259.398  1.00  0.00           N
+ATOM    191  CA  GLY E  39     206.596 185.083 260.134  1.00  0.00           C
+ATOM    192  C   GLY E  39     207.475 185.610 261.272  1.00  0.00           C
+ATOM    193  O   GLY E  39     208.302 184.886 261.824  1.00  0.00           O
+ATOM    194  N   ASP E  40     207.322 186.894 261.585  1.00  0.00           N
+ATOM    195  CA  ASP E  40     208.134 187.574 262.589  1.00  0.00           C
+ATOM    196  C   ASP E  40     207.572 187.350 263.991  1.00  0.00           C
+ATOM    197  O   ASP E  40     206.503 187.854 264.334  1.00  0.00           O
+ATOM    198  CB  ASP E  40     208.202 189.071 262.271  1.00  0.00           C
+ATOM    199  N   GLU E  41     208.283 186.560 264.790  1.00  0.00           N
+ATOM    200  CA  GLU E  41     207.809 186.165 266.112  1.00  0.00           C
+ATOM    201  C   GLU E  41     208.225 187.146 267.203  1.00  0.00           C
+ATOM    202  O   GLU E  41     207.883 186.965 268.373  1.00  0.00           O
+ATOM    203  CB  GLU E  41     208.331 184.775 266.470  1.00  0.00           C
+ATOM    204  N   ARG E  42     208.954 188.200 266.835  1.00  0.00           N
+ATOM    205  CA  ARG E  42     209.442 189.160 267.829  1.00  0.00           C
+ATOM    206  C   ARG E  42     208.305 190.056 268.296  1.00  0.00           C
+ATOM    207  O   ARG E  42     208.439 190.818 269.254  1.00  0.00           O
+ATOM    208  CB  ARG E  42     210.562 190.014 267.275  1.00  0.00           C
+ATOM    209  N   LEU E  43     207.180 189.956 267.605  1.00  0.00           N
+ATOM    210  CA  LEU E  43     205.988 190.705 267.943  1.00  0.00           C
+ATOM    211  C   LEU E  43     205.414 190.189 269.261  1.00  0.00           C
+ATOM    212  O   LEU E  43     204.712 190.915 269.966  1.00  0.00           O
+ATOM    213  CB  LEU E  43     204.984 190.588 266.793  1.00  0.00           C
+ATOM    214  N   LEU E  44     205.717 188.933 269.605  1.00  0.00           N
+ATOM    215  CA  LEU E  44     205.282 188.396 270.884  1.00  0.00           C
+ATOM    216  C   LEU E  44     206.085 189.019 271.993  1.00  0.00           C
+ATOM    217  O   LEU E  44     205.554 189.333 273.057  1.00  0.00           O
+ATOM    218  CB  LEU E  44     205.474 186.888 270.960  1.00  0.00           C
+ATOM    219  N   GLU E  45     207.380 189.174 271.746  1.00  0.00           N
+ATOM    220  CA  GLU E  45     208.287 189.719 272.733  1.00  0.00           C
+ATOM    221  C   GLU E  45     207.875 191.143 273.046  1.00  0.00           C
+ATOM    222  O   GLU E  45     207.911 191.564 274.202  1.00  0.00           O
+ATOM    223  CB  GLU E  45     209.724 189.666 272.213  1.00  0.00           C
+ATOM    224  N   GLU E  46     207.445 191.873 272.016  1.00  0.00           N
+ATOM    225  CA  GLU E  46     206.962 193.228 272.215  1.00  0.00           C
+ATOM    226  C   GLU E  46     205.652 193.236 272.991  1.00  0.00           C
+ATOM    227  O   GLU E  46     205.478 194.040 273.904  1.00  0.00           O
+ATOM    228  CB  GLU E  46     206.792 193.933 270.871  1.00  0.00           C
+ATOM    229  N   ALA E  47     204.743 192.312 272.685  1.00  0.00           N
+ATOM    230  CA  ALA E  47     203.491 192.283 273.425  1.00  0.00           C
+ATOM    231  C   ALA E  47     203.757 192.017 274.902  1.00  0.00           C
+ATOM    232  O   ALA E  47     203.155 192.651 275.775  1.00  0.00           O
+ATOM    233  CB  ALA E  47     202.565 191.218 272.859  1.00  0.00           C
+ATOM    234  N   GLU E  48     204.689 191.104 275.179  1.00  0.00           N
+ATOM    235  CA  GLU E  48     205.031 190.760 276.548  1.00  0.00           C
+ATOM    236  C   GLU E  48     205.747 191.905 277.248  1.00  0.00           C
+ATOM    237  O   GLU E  48     205.469 192.188 278.412  1.00  0.00           O
+ATOM    238  CB  GLU E  48     205.904 189.505 276.578  1.00  0.00           C
+ATOM    239  N   ARG E  49     206.646 192.580 276.532  1.00  0.00           N
+ATOM    240  CA  ARG E  49     207.383 193.697 277.102  1.00  0.00           C
+ATOM    241  C   ARG E  49     206.435 194.814 277.509  1.00  0.00           C
+ATOM    242  O   ARG E  49     206.580 195.399 278.583  1.00  0.00           O
+ATOM    243  CB  ARG E  49     208.407 194.238 276.114  1.00  0.00           C
+ATOM    244  N   LEU E  50     205.462 195.105 276.649  1.00  0.00           N
+ATOM    245  CA  LEU E  50     204.500 196.159 276.926  1.00  0.00           C
+ATOM    246  C   LEU E  50     203.664 195.803 278.144  1.00  0.00           C
+ATOM    247  O   LEU E  50     203.384 196.661 278.984  1.00  0.00           O
+ATOM    248  CB  LEU E  50     203.593 196.366 275.706  1.00  0.00           C
+ATOM    249  N   LEU E  51     203.306 194.528 278.271  1.00  0.00           N
+ATOM    250  CA  LEU E  51     202.547 194.094 279.429  1.00  0.00           C
+ATOM    251  C   LEU E  51     203.360 194.258 280.704  1.00  0.00           C
+ATOM    252  O   LEU E  51     202.832 194.725 281.712  1.00  0.00           O
+ATOM    253  CB  LEU E  51     202.115 192.634 279.272  1.00  0.00           C
+ATOM    254  N   GLU E  52     204.647 193.909 280.650  1.00  0.00           N
+ATOM    255  CA  GLU E  52     205.512 194.044 281.815  1.00  0.00           C
+ATOM    256  C   GLU E  52     205.634 195.500 282.258  1.00  0.00           C
+ATOM    257  O   GLU E  52     205.621 195.784 283.456  1.00  0.00           O
+ATOM    258  CB  GLU E  52     206.906 193.481 281.523  1.00  0.00           C
+ATOM    259  N   GLU E  53     205.715 196.427 281.297  1.00  0.00           N
+ATOM    260  CA  GLU E  53     205.791 197.845 281.641  1.00  0.00           C
+ATOM    261  C   GLU E  53     204.523 198.296 282.359  1.00  0.00           C
+ATOM    262  O   GLU E  53     204.585 199.060 283.322  1.00  0.00           O
+ATOM    263  CB  GLU E  53     205.998 198.713 280.394  1.00  0.00           C
+ATOM    264  N   VAL E  54     203.379 197.790 281.903  1.00  0.00           N
+ATOM    265  CA  VAL E  54     202.093 198.096 282.528  1.00  0.00           C
+ATOM    266  C   VAL E  54     201.940 197.483 283.933  1.00  0.00           C
+ATOM    267  O   VAL E  54     201.491 198.167 284.855  1.00  0.00           O
+ATOM    268  CB  VAL E  54     200.941 197.638 281.609  1.00  0.00           C
+ATOM    269  N   GLU E  55     202.312 196.197 284.088  1.00  0.00           N
+ATOM    270  CA  GLU E  55     202.251 195.469 285.357  1.00  0.00           C
+ATOM    271  C   GLU E  55     203.495 195.779 286.188  1.00  0.00           C
+ATOM    272  O   GLU E  55     203.476 195.679 287.419  1.00  0.00           O
+ATOM    273  CB  GLU E  55     202.127 193.938 285.121  1.00  0.00           C
+TER     274
+END
+</script>
+  <script id="report-data" type="application/json">{"schema_version":"2.0.0","tool":"biophys-guard","generated_at_utc":"2026-11-18T09:22:30.420398+00:00","input_file":"examples\\7JZL_LCB1_cb_stub.pdb","structure_format":"pdb","detected_model_source":"Experimental","is_backbone_only":true,"sidechain_completeness":0.0566,"chain_ids":["E"],"residue_count":55,"atom_count":273,"sequence_by_chain":{"E":"DKEWILQKIYEIMRLLDELGHAEASMRVSDLIYEFMKKGDERLLEEAERLLEEVE"},"config":{"ph":7.4,"sap_radius":5.0,"sap_macro_radius":10.0,"scm_radius":10.0,"probe_radius":1.4,"n_sphere_points":590,"sap_hotspot_threshold":0.15,"rsasa_core_threshold":0.18,"coventry_sap_green_max":25.0,"coventry_sap_amber_max":35.0,"min_charge_symmetry_amber":0.55,"min_charge_symmetry_red":0.35,"stability_backend":"auto","run_alanine_scan":true,"foldx_binary":"foldx","esm_model_name":"facebook/esm1v_t33_650M_UR90S_1"},"verdict":{"status":"INVALID_BACKBONE_ONLY","is_backbone_only":true,"sidechain_completeness":0.0566,"green_count":0,"amber_count":0,"red_count":0,"ml_confidence_flag":null,"low_confidence_residue_count":0,"low_confidence_surface_residues":[],"gate_checks":[{"name":"All-Atom Sidechain Completeness","metric":5.7,"unit":"% non-Gly residues with heavy sidechains beyond CB","reference_source":"Coventry / Baker Lab RFdiffusion->ProteinMPNN->AF2 protocol (Watson et al., Nature 2023)","green_range":">= 95%","amber_range":"80% - 95%","red_range":"< 80% (Refused as INVALID_BACKBONE_ONLY)","flag":"INVALID_BACKBONE_ONLY","detail":"Sidechain completeness is 5.7%; SAP, BUNS, SCM, and sidechain electrostatics cannot be computed on backbone-only or CB-stubbed models."}],"flags":["INVALID_BACKBONE_ONLY: missing atomic sidechain rotamers"],"recommendations":["Run inverse sequence design and full-atom rotamer packing (ProteinMPNN + FastRelax / AlphaFold2) prior to biophysical gating."]},"sap_metrics":{"calculable":false,"status_reason":"INVALID_BACKBONE_ONLY: sidechain completeness is 5.7% (<80% threshold). SAP, sidechain SASA, and hydrophobic patches require all-atom sidechain rotamers (run ProteinMPNN + FastRelax/AlphaFold2 before developability filtering).","radius_angstrom":5.0,"sap_score":null,"sap_score_by_chain":{},"max_sap":null,"mean_positive_sap":null,"sap_95th_percentile":null,"psh_surface_hydrophobicity":null,"total_sasa_a2":3264.79,"hydrophobic_sidechain_sasa_a2":0.0,"hydrophobic_surface_fraction":0.0,"aggregation_hotspot_count":0,"aggregation_hotspot_residues":[],"hydrophobic_patches":[]},"charge_metrics":{"calculable":false,"status_reason":"INVALID_BACKBONE_ONLY: sidechain completeness 5.7% (<80%). Chemical charge centers, coupled pKa, SCM, PPC/PNC require all-atom sidechain coordinates.","ph":7.4,"pka_model":"PROPKA3_coupled_desolvation_HB_Coulomb","reference_origin":"atomic_mass_weighted_center_of_mass","center_of_mass_angstrom":[200.154,191.606,272.27],"is_origin_dependent_dipole":false,"net_charge":0.0,"net_charge_by_chain":{"E":0.0},"positive_charge":0.0,"negative_charge":0.0,"isoelectric_point":7.0,"charge_density_per_1000a2":0.0,"dipole_moment_debye":0.0,"dipole_vector_debye":[0.0,0.0,0.0],"charge_symmetry_score":1.0,"hemispheric_charge_asymmetry":0.0,"dipole_normalized_asymmetry":0.0,"interchain_sfvcsp":null,"ppc_positive_patch":0.0,"pnc_negative_patch":0.0,"scm_method_note":"Agrawal_2016_exposed_sidechain_SASA_ge_10A2_10A_sphere (no APBS Poisson-Boltzmann continuum integral)","scm_pos_sum":0.0,"scm_neg_sum":0.0,"max_scm_positive":0.0,"min_scm_negative":0.0,"salt_bridge_count":0,"ionizable_residue_count":0},"stability_metrics":{"calculable":false,"status_reason":"INVALID_BACKBONE_ONLY: sidechain completeness 5.7% (<80%). Atomic BUNS, sidechain clashscore, core packing, and variant ddG cannot be evaluated without sidechains.","backend_used":"none","available_backends":["biophysical"],"score_value":null,"score_per_residue":null,"score_unit":"not_applicable","is_calibrated_free_energy":false,"delta_g_fold_kcal_mol":null,"mean_plddt":null,"low_plddt_fraction":null,"packing_score":0.0,"hbond_satisfaction_rate":0.0,"steric_clash_count":0,"molprobity_heavy_clashscore":0.0,"buns_count":0,"buns_atoms":[],"ramachandran_outlier_count":0,"disulfide_bond_count":0,"salt_bridge_count":0,"stable_core_residues":[],"destabilized_residues":[],"alanine_scan":[],"variant_scores":[]},"residues":[{"chain_id":"E","auth_seq_id":1,"ins_code":"","auth_comp_id":"ASP","aa1":"D","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":123.85,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":2,"ins_code":"","auth_comp_id":"LYS","aa1":"K","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":81.85,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":3,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":81.9,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":4,"ins_code":"","auth_comp_id":"TRP","aa1":"W","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":66.82,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":5,"ins_code":"","auth_comp_id":"ILE","aa1":"I","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":40.14,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":6,"ins_code":"","auth_comp_id":"LEU","aa1":"L","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":63.46,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":7,"ins_code":"","auth_comp_id":"GLN","aa1":"Q","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":59.38,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":8,"ins_code":"","auth_comp_id":"LYS","aa1":"K","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":59.29,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":9,"ins_code":"","auth_comp_id":"ILE","aa1":"I","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":19.07,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":10,"ins_code":"","auth_comp_id":"TYR","aa1":"Y","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":61.54,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":11,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":59.22,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":12,"ins_code":"","auth_comp_id":"ILE","aa1":"I","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":26.66,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":13,"ins_code":"","auth_comp_id":"MET","aa1":"M","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":21.96,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":14,"ins_code":"","auth_comp_id":"ARG","aa1":"R","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":64.97,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":15,"ins_code":"","auth_comp_id":"LEU","aa1":"L","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":56.76,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":16,"ins_code":"","auth_comp_id":"LEU","aa1":"L","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":18.96,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":17,"ins_code":"","auth_comp_id":"ASP","aa1":"D","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":68.14,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":18,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":91.19,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":19,"ins_code":"","auth_comp_id":"LEU","aa1":"L","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":84.07,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":20,"ins_code":"","auth_comp_id":"GLY","aa1":"G","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":68.74,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":21,"ins_code":"","auth_comp_id":"HIS","aa1":"H","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":31.11,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":22,"ins_code":"","auth_comp_id":"ALA","aa1":"A","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":73.49,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":23,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":83.71,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":24,"ins_code":"","auth_comp_id":"ALA","aa1":"A","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":32.71,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":25,"ins_code":"","auth_comp_id":"SER","aa1":"S","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":14.94,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":26,"ins_code":"","auth_comp_id":"MET","aa1":"M","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":63.17,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":27,"ins_code":"","auth_comp_id":"ARG","aa1":"R","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":64.79,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":28,"ins_code":"","auth_comp_id":"VAL","aa1":"V","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":13.14,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":29,"ins_code":"","auth_comp_id":"SER","aa1":"S","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":52.64,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":30,"ins_code":"","auth_comp_id":"ASP","aa1":"D","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":62.16,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":31,"ins_code":"","auth_comp_id":"LEU","aa1":"L","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":21.71,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":32,"ins_code":"","auth_comp_id":"ILE","aa1":"I","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":47.18,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":33,"ins_code":"","auth_comp_id":"TYR","aa1":"Y","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":71.17,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":34,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":60.4,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":35,"ins_code":"","auth_comp_id":"PHE","aa1":"F","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":40.81,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":36,"ins_code":"","auth_comp_id":"MET","aa1":"M","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":95.8,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":37,"ins_code":"","auth_comp_id":"LYS","aa1":"K","secondary_structure":"coil","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":93.22,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":38,"ins_code":"","auth_comp_id":"LYS","aa1":"K","secondary_structure":"sheet","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":58.94,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":39,"ins_code":"","auth_comp_id":"GLY","aa1":"G","secondary_structure":"sheet","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":86.32,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":40,"ins_code":"","auth_comp_id":"ASP","aa1":"D","secondary_structure":"sheet","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":64.23,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":41,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"coil","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":78.57,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":42,"ins_code":"","auth_comp_id":"ARG","aa1":"R","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":73.26,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":43,"ins_code":"","auth_comp_id":"LEU","aa1":"L","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":28.36,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":44,"ins_code":"","auth_comp_id":"LEU","aa1":"L","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":42.41,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":45,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":65.07,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":46,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":56.07,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":47,"ins_code":"","auth_comp_id":"ALA","aa1":"A","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":9.21,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":48,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":59.61,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":49,"ins_code":"","auth_comp_id":"ARG","aa1":"R","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":59.65,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":50,"ins_code":"","auth_comp_id":"LEU","aa1":"L","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":43.58,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":51,"ins_code":"","auth_comp_id":"LEU","aa1":"L","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":46.59,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":52,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":70.24,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":53,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":89.16,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":54,"ins_code":"","auth_comp_id":"VAL","aa1":"V","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":72.34,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"},{"chain_id":"E","auth_seq_id":55,"ins_code":"","auth_comp_id":"GLU","aa1":"E","secondary_structure":"helix","plddt":null,"low_confidence_rotamer_warning":false,"sasa_total":121.05,"sasa_sidechain":0.0,"rsasa":0.0,"sap_r5":null,"sap_r10":null,"effective_pka":null,"charge_ph":0.0,"scm_r10":null,"stability_score_residue":null,"ala_scan_score":null,"buns_atom_count":0,"clash_atom_count":0,"biophysical_risk_score":0.0,"risk_category":"not_applicable_backbone_only","hex_color":"#94a3b8"}],"viewer_overlays":{"pymol_script_path":null,"risk_pdb_path":null,"ngl_viewer_path":null,"molstar_sidecar_path":null,"color_legend":{"aggregation_hotspot":"#dc2626","destabilized":"#f97316","neutral_surface":"#e2e8f0","stable_core":"#2563eb","not_applicable_backbone_only":"#94a3b8"},"red_hotspot_residues":[],"blue_core_residues":[],"destabilized_residues":[]}}</script>
+  <script>
+    const pdbString = document.getElementById("pdb-data").textContent;
+    const report = JSON.parse(document.getElementById("report-data").textContent);
+    const resColorMap = {"E:1": "#94a3b8", "E:2": "#94a3b8", "E:3": "#94a3b8", "E:4": "#94a3b8", "E:5": "#94a3b8", "E:6": "#94a3b8", "E:7": "#94a3b8", "E:8": "#94a3b8", "E:9": "#94a3b8", "E:10": "#94a3b8", "E:11": "#94a3b8", "E:12": "#94a3b8", "E:13": "#94a3b8", "E:14": "#94a3b8", "E:15": "#94a3b8", "E:16": "#94a3b8", "E:17": "#94a3b8", "E:18": "#94a3b8", "E:19": "#94a3b8", "E:20": "#94a3b8", "E:21": "#94a3b8", "E:22": "#94a3b8", "E:23": "#94a3b8", "E:24": "#94a3b8", "E:25": "#94a3b8", "E:26": "#94a3b8", "E:27": "#94a3b8", "E:28": "#94a3b8", "E:29": "#94a3b8", "E:30": "#94a3b8", "E:31": "#94a3b8", "E:32": "#94a3b8", "E:33": "#94a3b8", "E:34": "#94a3b8", "E:35": "#94a3b8", "E:36": "#94a3b8", "E:37": "#94a3b8", "E:38": "#94a3b8", "E:39": "#94a3b8", "E:40": "#94a3b8", "E:41": "#94a3b8", "E:42": "#94a3b8", "E:43": "#94a3b8", "E:44": "#94a3b8", "E:45": "#94a3b8", "E:46": "#94a3b8", "E:47": "#94a3b8", "E:48": "#94a3b8", "E:49": "#94a3b8", "E:50": "#94a3b8", "E:51": "#94a3b8", "E:52": "#94a3b8", "E:53": "#94a3b8", "E:54": "#94a3b8", "E:55": "#94a3b8"};
+    const hotspotList = [];
+    const coreList = [];
+    const destabList = [];
+
+    const toSele = (arr) => arr.length
+      ? arr.map(r => `(${r.resi}:${r.chain})`).join(" or ")
+      : "none";
+
+    const hotspotSele = toSele(hotspotList);
+    const coreSele = toSele(coreList);
+    const destabSele = toSele(destabList);
+
+    let stage = null;
+    let compRef = null;
+    let cartoonRepr = null;
+    let hotspotSurfRepr = null;
+    let spinning = false;
+    let showSurf = true;
+
+    if (typeof NGL === "undefined") {
+      document.getElementById("offline-msg").style.display = "flex";
+    } else {
+      const riskSchemeId = NGL.ColormakerRegistry.addScheme(function () {
+        this.atomColor = function (atom) {
+          const ins = atom.inscode ? atom.inscode.trim() : "";
+          const key = `${atom.chainname}:${atom.resno}${ins}`;
+          const hex = resColorMap[key] || "#e2e8f0";
+          return parseInt(hex.slice(1), 16);
+        };
+      }, "biophys_risk");
+
+      stage = new NGL.Stage("viewport", { backgroundColor: "#090d16" });
+      const blob = new Blob([pdbString], { type: "text/plain" });
+      stage.loadFile(blob, { ext: "pdb" }).then(function (comp) {
+        compRef = comp;
+        cartoonRepr = comp.addRepresentation("cartoon", { color: riskSchemeId, quality: "high" });
+        if (hotspotList.length) {
+          comp.addRepresentation("licorice", { sele: `(${hotspotSele}) and not backbone`, color: "#dc2626", radiusScale: 1.2 });
+          hotspotSurfRepr = comp.addRepresentation("surface", { sele: hotspotSele, color: "#dc2626", opacity: 0.42, surfaceType: "av" });
+        }
+        if (coreList.length) {
+          comp.addRepresentation("licorice", { sele: `(${coreSele}) and not backbone`, color: "#2563eb", radiusScale: 1.0 });
+        }
+        if (destabList.length) {
+          comp.addRepresentation("licorice", { sele: `(${destabSele}) and not backbone`, color: "#f97316", radiusScale: 1.1 });
+        }
+        comp.autoView();
+      });
+      window.addEventListener("resize", () => stage && stage.handleResize(), false);
+    }
+
+    function setColorMode(mode) {
+      if (!cartoonRepr) return;
+      document.getElementById("btn-cat").classList.toggle("active", mode === "categorical");
+      document.getElementById("btn-bfac").classList.toggle("active", mode === "spectrum");
+      if (mode === "categorical") {
+        cartoonRepr.setParameters({ color: "biophys_risk" });
+      } else {
+        cartoonRepr.setParameters({ colorScheme: "bfactor", colorScale: ["#2563eb", "#f8fafc", "#dc2626"], colorDomain: [-99.99, 99.99] });
+      }
+    }
+
+    function toggleHotspotSurface() {
+      showSurf = !showSurf;
+      document.getElementById("btn-surf").classList.toggle("active", showSurf);
+      if (hotspotSurfRepr) hotspotSurfRepr.setVisibility(showSurf);
+    }
+
+    function toggleSpin() {
+      if (!stage) return;
+      spinning = !spinning;
+      document.getElementById("btn-spin").classList.toggle("active", spinning);
+      stage.setSpin(spinning);
+    }
+
+    const gatesBox = document.getElementById("gates-box");
+    const flagCols = { GREEN: "#16a34a", AMBER: "#d97706", RED: "#dc2626", INVALID_BACKBONE_ONLY: "#64748b" };
+    gatesBox.innerHTML = report.verdict.gate_checks.map(g =>
+      `<div style="font-size:12px;margin-bottom:6px;display:flex;justify-content:space-between;gap:8px;">
+        <span><strong>${g.name}</strong>: ${g.detail}</span>
+        <span class="pill" style="background:${flagCols[g.flag]};color:#fff;white-space:nowrap;">${g.flag}</span>
+      </div>`
+    ).join("");
+
+    const patchesBox = document.getElementById("patches-box");
+    if (report.sap_metrics.hydrophobic_patches.length === 0) {
+      patchesBox.innerHTML = "<span style='color:#94a3b8;font-size:12px;'>No contiguous hydrophobic patches detected.</span>";
+    } else {
+      patchesBox.innerHTML = report.sap_metrics.hydrophobic_patches.map(p =>
+        `<div style="font-size:12px;margin-bottom:6px;">
+          <strong style="color:#f87171;">${p.patch_id}</strong> (${p.hydrophobic_sidechain_area_a2} &Aring;&sup2; SC, max SAP ${p.max_sap}) &mdash; ${p.residue_labels.join(", ")}
+        </div>`
+      ).join("");
+    }
+
+    const varBox = document.getElementById("variants-box");
+    const vars = report.stability_metrics.variant_scores;
+    if (!vars || vars.length === 0) {
+      varBox.innerHTML = "<span style='color:#94a3b8;font-size:12px;'>No explicit point variants requested.</span>";
+    } else {
+      varBox.innerHTML = `<table><thead><tr><th>Mut</th><th>Score</th><th>Unit</th><th>Effect</th></tr></thead><tbody>` +
+        vars.map(v => `<tr><td>${v.mutation}</td><td>${v.score_value >= 0 ? "+" : ""}${v.score_value.toFixed(3)}</td><td>${v.score_unit}</td><td>${v.classification}</td></tr>`).join("") +
+        `</tbody></table>`;
+    }
+
+    const tbody = document.getElementById("res-tbody");
+    tbody.innerHTML = report.residues.map(r => {
+      const sapStr = r.sap_r5 !== null ? r.sap_r5.toFixed(3) : "N/A";
+      const seleStr = r.ins_code ? `${r.auth_seq_id}^${r.ins_code}:${r.chain_id}` : `${r.auth_seq_id}:${r.chain_id}`;
+      return `<tr class="clickable" onclick="compRef && compRef.autoView('${seleStr}', 500)">
+        <td>${r.chain_id}:${r.aa1}${r.auth_seq_id}${r.ins_code}</td>
+        <td>${sapStr}</td>
+        <td>${r.rsasa.toFixed(2)}</td>
+        <td>${r.buns_atom_count} / ${r.clash_atom_count}</td>
+        <td><span class="pill" style="background:${r.hex_color};color:${r.risk_category === 'neutral_surface' ? '#0f172a' : '#ffffff'}">${r.risk_category}</span></td>
+      </tr>`;
+    }).join("");
+  </script>
+</body>
+</html>

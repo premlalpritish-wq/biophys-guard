@@ -1,0 +1,11 @@
+{
+  "load_structure": {
+    "id": "7JZU_LCB1_backbone_only.pdb",
+    "source": "artifact"
+  },
+  "set_overlays": {
+    "confidence": false,
+    "annotations": true
+  },
+  "annotations": []
+}

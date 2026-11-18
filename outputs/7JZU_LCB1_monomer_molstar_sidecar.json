@@ -1,0 +1,124 @@
+{
+  "load_structure": {
+    "id": "7JZU_LCB1_monomer.pdb",
+    "source": "artifact"
+  },
+  "set_overlays": {
+    "confidence": false,
+    "annotations": true
+  },
+  "annotations": [
+    {
+      "tool": "annotate_region",
+      "arguments": {
+        "residues": [
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 4,
+            "end_auth_seq_id": 4
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 6,
+            "end_auth_seq_id": 6
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 15,
+            "end_auth_seq_id": 15
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 33,
+            "end_auth_seq_id": 33
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 36,
+            "end_auth_seq_id": 36
+          }
+        ],
+        "color": "#dc2626",
+        "text": "Aggregation Hot-Spots (Red): W4, L6, L15, Y33, M36 | SapScore=21.33, Max SAP=0.260"
+      }
+    },
+    {
+      "tool": "annotate_region",
+      "arguments": {
+        "residues": [
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 5,
+            "end_auth_seq_id": 5
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 9,
+            "end_auth_seq_id": 9
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 12,
+            "end_auth_seq_id": 13
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 16,
+            "end_auth_seq_id": 16
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 24,
+            "end_auth_seq_id": 25
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 28,
+            "end_auth_seq_id": 28
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 31,
+            "end_auth_seq_id": 32
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 35,
+            "end_auth_seq_id": 35
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 43,
+            "end_auth_seq_id": 43
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 47,
+            "end_auth_seq_id": 47
+          },
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 54,
+            "end_auth_seq_id": 54
+          }
+        ],
+        "color": "#2563eb",
+        "text": "Stable Buried Core (Blue): I5, I9, I12, M13, L16, A24, S25, V28 (+6 more) | Packing=1.00, BUNS=0"
+      }
+    },
+    {
+      "tool": "annotate_region",
+      "arguments": {
+        "residues": [
+          {
+            "auth_asym_id": "A",
+            "start_auth_seq_id": 45,
+            "end_auth_seq_id": 45
+          }
+        ],
+        "color": "#f97316",
+        "text": "Destabilized / Clash / BUNS Sites (Orange): E45"
+      }
+    }
+  ]
+}

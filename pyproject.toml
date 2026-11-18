@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biophys-guard"
+version = "0.1.0"
+description = "Biophysical Constraint-Filtering Harness for Generated Proteins (SAP, Charge Symmetry, Stability ddG, JSON Schema, PyMOL/NGL/Mol* Overlays)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "pydantic>=2.5",
+]
+
+[project.optional-dependencies]
+esm = ["torch>=2.0", "fair-esm>=2.0"]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+biophys-guard = "biophys_guard.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["biophys_guard*"]

@@ -1,0 +1,11 @@
+{
+  "load_structure": {
+    "id": "7JZL_LCB1_cb_stub.pdb",
+    "source": "artifact"
+  },
+  "set_overlays": {
+    "confidence": false,
+    "annotations": true
+  },
+  "annotations": []
+}

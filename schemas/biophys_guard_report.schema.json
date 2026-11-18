@@ -1,0 +1,1419 @@
+{
+  "$defs": {
+    "BiophysGuardConfig": {
+      "description": "Runtime parameters and literature-calibrated reference bounds for biophys-guard.",
+      "properties": {
+        "ph": {
+          "default": 7.4,
+          "description": "Solution pH for coupled pKa and electrostatic calculations.",
+          "maximum": 14.0,
+          "minimum": 0.0,
+          "title": "Ph",
+          "type": "number"
+        },
+        "sap_radius": {
+          "default": 5.0,
+          "description": "Chennamsetty SAP spatial cutoff radius (A).",
+          "exclusiveMinimum": 1.0,
+          "maximum": 20.0,
+          "title": "Sap Radius",
+          "type": "number"
+        },
+        "sap_macro_radius": {
+          "default": 10.0,
+          "description": "Macroscopic SAP neighborhood cutoff radius (A).",
+          "exclusiveMinimum": 2.0,
+          "maximum": 25.0,
+          "title": "Sap Macro Radius",
+          "type": "number"
+        },
+        "scm_radius": {
+          "default": 10.0,
+          "description": "Agrawal et al. (2016) Spatial Charge Map cutoff radius (A).",
+          "exclusiveMinimum": 2.0,
+          "maximum": 25.0,
+          "title": "Scm Radius",
+          "type": "number"
+        },
+        "probe_radius": {
+          "default": 1.4,
+          "description": "Solvent probe radius for Shrake-Rupley SASA (A).",
+          "exclusiveMinimum": 0.1,
+          "maximum": 5.0,
+          "title": "Probe Radius",
+          "type": "number"
+        },
+        "n_sphere_points": {
+          "default": 590,
+          "description": "Fibonacci sphere tessellation points per atom for rotationally converged SASA.",
+          "maximum": 1200,
+          "minimum": 128,
+          "title": "N Sphere Points",
+          "type": "integer"
+        },
+        "sap_hotspot_threshold": {
+          "default": 0.15,
+          "description": "Per-residue Chennamsetty SAP threshold for flagging exposed aggregation hot-spots.",
+          "title": "Sap Hotspot Threshold",
+          "type": "number"
+        },
+        "rsasa_core_threshold": {
+          "default": 0.18,
+          "description": "Relative side-chain SASA cutoff below which a residue is considered buried core.",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Rsasa Core Threshold",
+          "type": "number"
+        },
+        "coventry_sap_green_max": {
+          "default": 25.0,
+          "description": "Coventry SapScoreMetric green bound (sum of positive residue SAP).",
+          "title": "Coventry Sap Green Max",
+          "type": "number"
+        },
+        "coventry_sap_amber_max": {
+          "default": 35.0,
+          "description": "Coventry SapScoreMetric amber upper bound (Cao et al., Nature 2022).",
+          "title": "Coventry Sap Amber Max",
+          "type": "number"
+        },
+        "min_charge_symmetry_amber": {
+          "default": 0.55,
+          "description": "Single-chain charge symmetry amber lower bound.",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Min Charge Symmetry Amber",
+          "type": "number"
+        },
+        "min_charge_symmetry_red": {
+          "default": 0.35,
+          "description": "Single-chain charge symmetry red lower bound.",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Min Charge Symmetry Red",
+          "type": "number"
+        },
+        "stability_backend": {
+          "default": "auto",
+          "description": "Variant/stability scorer backend selector.",
+          "enum": [
+            "auto",
+            "foldx",
+            "esm1v",
+            "biophysical"
+          ],
+          "title": "Stability Backend",
+          "type": "string"
+        },
+        "run_alanine_scan": {
+          "default": true,
+          "description": "Whether to compute per-residue alanine scan scores.",
+          "title": "Run Alanine Scan",
+          "type": "boolean"
+        },
+        "foldx_binary": {
+          "default": "foldx",
+          "description": "Executable name or path for FoldX if installed.",
+          "title": "Foldx Binary",
+          "type": "string"
+        },
+        "esm_model_name": {
+          "default": "facebook/esm1v_t33_650M_UR90S_1",
+          "description": "ESM-1v model identifier for zero-shot variant scoring.",
+          "title": "Esm Model Name",
+          "type": "string"
+        }
+      },
+      "title": "BiophysGuardConfig",
+      "type": "object"
+    },
+    "ChargeMetrics": {
+      "description": "Classical electrodynamics, coupled PROPKA-style titration, Agrawal SCM, and OPIG TAP charge metrics.",
+      "properties": {
+        "calculable": {
+          "default": true,
+          "title": "Calculable",
+          "type": "boolean"
+        },
+        "status_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Reason"
+        },
+        "ph": {
+          "title": "Ph",
+          "type": "number"
+        },
+        "pka_model": {
+          "default": "PROPKA3_coupled_desolvation_HB_Coulomb",
+          "title": "Pka Model",
+          "type": "string"
+        },
+        "reference_origin": {
+          "default": "atomic_mass_weighted_center_of_mass",
+          "title": "Reference Origin",
+          "type": "string"
+        },
+        "center_of_mass_angstrom": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Center Of Mass Angstrom",
+          "type": "array"
+        },
+        "is_origin_dependent_dipole": {
+          "description": "True whenever abs(net_charge) > 1e-3 e; dipole is strictly standardized to the mass-weighted CoM.",
+          "title": "Is Origin Dependent Dipole",
+          "type": "boolean"
+        },
+        "net_charge": {
+          "title": "Net Charge",
+          "type": "number"
+        },
+        "net_charge_by_chain": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Net Charge By Chain",
+          "type": "object"
+        },
+        "positive_charge": {
+          "minimum": 0.0,
+          "title": "Positive Charge",
+          "type": "number"
+        },
+        "negative_charge": {
+          "maximum": 0.0,
+          "title": "Negative Charge",
+          "type": "number"
+        },
+        "isoelectric_point": {
+          "maximum": 14.0,
+          "minimum": 0.0,
+          "title": "Isoelectric Point",
+          "type": "number"
+        },
+        "charge_density_per_1000a2": {
+          "title": "Charge Density Per 1000A2",
+          "type": "number"
+        },
+        "dipole_moment_debye": {
+          "minimum": 0.0,
+          "title": "Dipole Moment Debye",
+          "type": "number"
+        },
+        "dipole_vector_debye": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Dipole Vector Debye",
+          "type": "array"
+        },
+        "charge_symmetry_score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Charge Symmetry Score",
+          "type": "number"
+        },
+        "hemispheric_charge_asymmetry": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Hemispheric Charge Asymmetry",
+          "type": "number"
+        },
+        "dipole_normalized_asymmetry": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Dipole Normalized Asymmetry",
+          "type": "number"
+        },
+        "interchain_sfvcsp": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OPIG TAP Structural Fv Charge Symmetry Parameter (q_A * q_B) for multi-chain assemblies.",
+          "title": "Interchain Sfvcsp"
+        },
+        "ppc_positive_patch": {
+          "description": "OPIG-style positive surface charge patch score (PPC).",
+          "minimum": 0.0,
+          "title": "Ppc Positive Patch",
+          "type": "number"
+        },
+        "pnc_negative_patch": {
+          "description": "OPIG-style negative surface charge patch score (PNC).",
+          "minimum": 0.0,
+          "title": "Pnc Negative Patch",
+          "type": "number"
+        },
+        "scm_method_note": {
+          "default": "Agrawal_2016_exposed_sidechain_SASA_ge_10A2_10A_sphere (no APBS Poisson-Boltzmann continuum integral)",
+          "title": "Scm Method Note",
+          "type": "string"
+        },
+        "scm_pos_sum": {
+          "description": "Sum of positive atomic SCM values across exposed residues.",
+          "minimum": 0.0,
+          "title": "Scm Pos Sum",
+          "type": "number"
+        },
+        "scm_neg_sum": {
+          "description": "Sum of negative atomic SCM values across exposed residues (viscosity predictor).",
+          "maximum": 0.0,
+          "title": "Scm Neg Sum",
+          "type": "number"
+        },
+        "max_scm_positive": {
+          "title": "Max Scm Positive",
+          "type": "number"
+        },
+        "min_scm_negative": {
+          "title": "Min Scm Negative",
+          "type": "number"
+        },
+        "salt_bridge_count": {
+          "minimum": 0,
+          "title": "Salt Bridge Count",
+          "type": "integer"
+        },
+        "ionizable_residue_count": {
+          "minimum": 0,
+          "title": "Ionizable Residue Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ph",
+        "center_of_mass_angstrom",
+        "is_origin_dependent_dipole",
+        "net_charge",
+        "positive_charge",
+        "negative_charge",
+        "isoelectric_point",
+        "charge_density_per_1000a2",
+        "dipole_moment_debye",
+        "dipole_vector_debye",
+        "charge_symmetry_score",
+        "hemispheric_charge_asymmetry",
+        "dipole_normalized_asymmetry",
+        "ppc_positive_patch",
+        "pnc_negative_patch",
+        "scm_pos_sum",
+        "scm_neg_sum",
+        "max_scm_positive",
+        "min_scm_negative",
+        "salt_bridge_count",
+        "ionizable_residue_count"
+      ],
+      "title": "ChargeMetrics",
+      "type": "object"
+    },
+    "DevelopabilityVerdict": {
+      "description": "Traffic-light developability gating summary anchored to OPIG/Coventry standards.",
+      "properties": {
+        "status": {
+          "enum": [
+            "GREEN",
+            "AMBER",
+            "RED",
+            "INVALID_BACKBONE_ONLY"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "is_backbone_only": {
+          "default": false,
+          "title": "Is Backbone Only",
+          "type": "boolean"
+        },
+        "sidechain_completeness": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Sidechain Completeness",
+          "type": "number"
+        },
+        "green_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Green Count",
+          "type": "integer"
+        },
+        "amber_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Amber Count",
+          "type": "integer"
+        },
+        "red_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Red Count",
+          "type": "integer"
+        },
+        "ml_confidence_flag": {
+          "anyOf": [
+            {
+              "enum": [
+                "GREEN",
+                "AMBER",
+                "RED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ml Confidence Flag"
+        },
+        "low_confidence_residue_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Low Confidence Residue Count",
+          "type": "integer"
+        },
+        "low_confidence_surface_residues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Low Confidence Surface Residues",
+          "type": "array"
+        },
+        "gate_checks": {
+          "items": {
+            "$ref": "#/$defs/GateCheck"
+          },
+          "title": "Gate Checks",
+          "type": "array"
+        },
+        "flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "recommendations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Recommendations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status",
+        "sidechain_completeness"
+      ],
+      "title": "DevelopabilityVerdict",
+      "type": "object"
+    },
+    "GateCheck": {
+      "description": "Single OPIG-style empirically anchored developability gate check.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "metric": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metric"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "reference_source": {
+          "title": "Reference Source",
+          "type": "string"
+        },
+        "green_range": {
+          "title": "Green Range",
+          "type": "string"
+        },
+        "amber_range": {
+          "title": "Amber Range",
+          "type": "string"
+        },
+        "red_range": {
+          "title": "Red Range",
+          "type": "string"
+        },
+        "flag": {
+          "enum": [
+            "GREEN",
+            "AMBER",
+            "RED",
+            "INVALID_BACKBONE_ONLY"
+          ],
+          "title": "Flag",
+          "type": "string"
+        },
+        "detail": {
+          "title": "Detail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "unit",
+        "reference_source",
+        "green_range",
+        "amber_range",
+        "red_range",
+        "flag",
+        "detail"
+      ],
+      "title": "GateCheck",
+      "type": "object"
+    },
+    "HydrophobicPatch": {
+      "description": "Contiguous 3D exposed hydrophobic cluster measured over side-chain contacts.",
+      "properties": {
+        "patch_id": {
+          "title": "Patch Id",
+          "type": "string"
+        },
+        "chain_id": {
+          "title": "Chain Id",
+          "type": "string"
+        },
+        "residue_labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Residue Labels",
+          "type": "array"
+        },
+        "hydrophobic_sidechain_area_a2": {
+          "minimum": 0.0,
+          "title": "Hydrophobic Sidechain Area A2",
+          "type": "number"
+        },
+        "mean_sap": {
+          "title": "Mean Sap",
+          "type": "number"
+        },
+        "max_sap": {
+          "title": "Max Sap",
+          "type": "number"
+        },
+        "centroid": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Centroid",
+          "type": "array"
+        }
+      },
+      "required": [
+        "patch_id",
+        "chain_id",
+        "residue_labels",
+        "hydrophobic_sidechain_area_a2",
+        "mean_sap",
+        "max_sap",
+        "centroid"
+      ],
+      "title": "HydrophobicPatch",
+      "type": "object"
+    },
+    "ResidueRiskProfile": {
+      "description": "Per-residue biophysical metrics, confidence metadata, and 3D risk classification.",
+      "properties": {
+        "chain_id": {
+          "title": "Chain Id",
+          "type": "string"
+        },
+        "auth_seq_id": {
+          "title": "Auth Seq Id",
+          "type": "integer"
+        },
+        "ins_code": {
+          "default": "",
+          "title": "Ins Code",
+          "type": "string"
+        },
+        "auth_comp_id": {
+          "title": "Auth Comp Id",
+          "type": "string"
+        },
+        "aa1": {
+          "title": "Aa1",
+          "type": "string"
+        },
+        "secondary_structure": {
+          "enum": [
+            "helix",
+            "sheet",
+            "coil"
+          ],
+          "title": "Secondary Structure",
+          "type": "string"
+        },
+        "plddt": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plddt"
+        },
+        "low_confidence_rotamer_warning": {
+          "default": false,
+          "title": "Low Confidence Rotamer Warning",
+          "type": "boolean"
+        },
+        "sasa_total": {
+          "minimum": 0.0,
+          "title": "Sasa Total",
+          "type": "number"
+        },
+        "sasa_sidechain": {
+          "minimum": 0.0,
+          "title": "Sasa Sidechain",
+          "type": "number"
+        },
+        "rsasa": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Rsasa",
+          "type": "number"
+        },
+        "sap_r5": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sap R5"
+        },
+        "sap_r10": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sap R10"
+        },
+        "effective_pka": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Effective Pka"
+        },
+        "charge_ph": {
+          "default": 0.0,
+          "title": "Charge Ph",
+          "type": "number"
+        },
+        "scm_r10": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scm R10"
+        },
+        "stability_score_residue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stability Score Residue"
+        },
+        "ala_scan_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ala Scan Score"
+        },
+        "buns_atom_count": {
+          "default": 0,
+          "title": "Buns Atom Count",
+          "type": "integer"
+        },
+        "clash_atom_count": {
+          "default": 0,
+          "title": "Clash Atom Count",
+          "type": "integer"
+        },
+        "biophysical_risk_score": {
+          "maximum": 99.99,
+          "minimum": -99.99,
+          "title": "Biophysical Risk Score",
+          "type": "number"
+        },
+        "risk_category": {
+          "enum": [
+            "aggregation_hotspot",
+            "destabilized",
+            "neutral_surface",
+            "stable_core",
+            "not_applicable_backbone_only"
+          ],
+          "title": "Risk Category",
+          "type": "string"
+        },
+        "hex_color": {
+          "title": "Hex Color",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chain_id",
+        "auth_seq_id",
+        "auth_comp_id",
+        "aa1",
+        "secondary_structure",
+        "sasa_total",
+        "sasa_sidechain",
+        "rsasa",
+        "biophysical_risk_score",
+        "risk_category",
+        "hex_color"
+      ],
+      "title": "ResidueRiskProfile",
+      "type": "object"
+    },
+    "SAPMetrics": {
+      "description": "Chennamsetty (2009) SAP & Coventry (2022) SapScoreMetric outputs.",
+      "properties": {
+        "calculable": {
+          "default": true,
+          "title": "Calculable",
+          "type": "boolean"
+        },
+        "status_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Reason"
+        },
+        "radius_angstrom": {
+          "title": "Radius Angstrom",
+          "type": "number"
+        },
+        "sap_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Coventry whole-protein sum of positive residue SAP_r5 values.",
+          "title": "Sap Score"
+        },
+        "sap_score_by_chain": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Sap Score By Chain",
+          "type": "object"
+        },
+        "max_sap": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Sap"
+        },
+        "mean_positive_sap": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mean Positive Sap"
+        },
+        "sap_95th_percentile": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sap 95Th Percentile"
+        },
+        "psh_surface_hydrophobicity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OPIG-style pairwise surface hydrophobic proximity integral (PSH).",
+          "title": "Psh Surface Hydrophobicity"
+        },
+        "total_sasa_a2": {
+          "minimum": 0.0,
+          "title": "Total Sasa A2",
+          "type": "number"
+        },
+        "hydrophobic_sidechain_sasa_a2": {
+          "minimum": 0.0,
+          "title": "Hydrophobic Sidechain Sasa A2",
+          "type": "number"
+        },
+        "hydrophobic_surface_fraction": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Hydrophobic Surface Fraction",
+          "type": "number"
+        },
+        "aggregation_hotspot_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Aggregation Hotspot Count",
+          "type": "integer"
+        },
+        "aggregation_hotspot_residues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Aggregation Hotspot Residues",
+          "type": "array"
+        },
+        "hydrophobic_patches": {
+          "items": {
+            "$ref": "#/$defs/HydrophobicPatch"
+          },
+          "title": "Hydrophobic Patches",
+          "type": "array"
+        }
+      },
+      "required": [
+        "radius_angstrom",
+        "total_sasa_a2",
+        "hydrophobic_sidechain_sasa_a2",
+        "hydrophobic_surface_fraction"
+      ],
+      "title": "SAPMetrics",
+      "type": "object"
+    },
+    "StabilityMetrics": {
+      "description": "Structural quality, atomic BUNS, MolProbity clashes, and stability scoring with epistemic unit honesty.",
+      "properties": {
+        "calculable": {
+          "default": true,
+          "title": "Calculable",
+          "type": "boolean"
+        },
+        "status_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Reason"
+        },
+        "backend_used": {
+          "title": "Backend Used",
+          "type": "string"
+        },
+        "available_backends": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Available Backends",
+          "type": "array"
+        },
+        "score_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Global stability score in `score_unit`.",
+          "title": "Score Value"
+        },
+        "score_per_residue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score Per Residue"
+        },
+        "score_unit": {
+          "enum": [
+            "kcal/mol",
+            "heuristic_au",
+            "not_applicable"
+          ],
+          "title": "Score Unit",
+          "type": "string"
+        },
+        "is_calibrated_free_energy": {
+          "default": false,
+          "title": "Is Calibrated Free Energy",
+          "type": "boolean"
+        },
+        "delta_g_fold_kcal_mol": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Populated ONLY when FoldX Stability produced calibrated kcal/mol energy.",
+          "title": "Delta G Fold Kcal Mol"
+        },
+        "mean_plddt": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mean Plddt"
+        },
+        "low_plddt_fraction": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Low Plddt Fraction"
+        },
+        "packing_score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Packing Score",
+          "type": "number"
+        },
+        "hbond_satisfaction_rate": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Hbond Satisfaction Rate",
+          "type": "number"
+        },
+        "steric_clash_count": {
+          "default": 0,
+          "description": "MolProbity non-bonded heavy-atom overlaps >= 0.40 A.",
+          "minimum": 0,
+          "title": "Steric Clash Count",
+          "type": "integer"
+        },
+        "molprobity_heavy_clashscore": {
+          "default": 0.0,
+          "description": "Heavy-atom steric clashes per 1,000 heavy atoms.",
+          "minimum": 0.0,
+          "title": "Molprobity Heavy Clashscore",
+          "type": "number"
+        },
+        "buns_count": {
+          "default": 0,
+          "description": "Atomic Buried Unsatisfied Polar atoms (SASA_atom < 0.5 A^2, 0 valid H-bonds).",
+          "minimum": 0,
+          "title": "Buns Count",
+          "type": "integer"
+        },
+        "buns_atoms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Buns Atoms",
+          "type": "array"
+        },
+        "ramachandran_outlier_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Ramachandran Outlier Count",
+          "type": "integer"
+        },
+        "disulfide_bond_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Disulfide Bond Count",
+          "type": "integer"
+        },
+        "salt_bridge_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Salt Bridge Count",
+          "type": "integer"
+        },
+        "stable_core_residues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Stable Core Residues",
+          "type": "array"
+        },
+        "destabilized_residues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Destabilized Residues",
+          "type": "array"
+        },
+        "alanine_scan": {
+          "items": {
+            "$ref": "#/$defs/VariantScore"
+          },
+          "title": "Alanine Scan",
+          "type": "array"
+        },
+        "variant_scores": {
+          "items": {
+            "$ref": "#/$defs/VariantScore"
+          },
+          "title": "Variant Scores",
+          "type": "array"
+        }
+      },
+      "required": [
+        "backend_used",
+        "score_unit",
+        "packing_score",
+        "hbond_satisfaction_rate"
+      ],
+      "title": "StabilityMetrics",
+      "type": "object"
+    },
+    "VariantScore": {
+      "description": "Mutational effect prediction with explicit physical unit and calibration disclosure.",
+      "properties": {
+        "mutation": {
+          "title": "Mutation",
+          "type": "string"
+        },
+        "chain_id": {
+          "title": "Chain Id",
+          "type": "string"
+        },
+        "auth_seq_id": {
+          "title": "Auth Seq Id",
+          "type": "integer"
+        },
+        "ins_code": {
+          "default": "",
+          "title": "Ins Code",
+          "type": "string"
+        },
+        "wildtype": {
+          "title": "Wildtype",
+          "type": "string"
+        },
+        "mutant": {
+          "title": "Mutant",
+          "type": "string"
+        },
+        "score_value": {
+          "description": "Numeric variant effect score in `score_unit` (positive = destabilizing/unfavorable).",
+          "title": "Score Value",
+          "type": "number"
+        },
+        "score_unit": {
+          "enum": [
+            "kcal/mol",
+            "log_likelihood_ratio",
+            "heuristic_au"
+          ],
+          "title": "Score Unit",
+          "type": "string"
+        },
+        "is_calibrated_free_energy": {
+          "description": "True ONLY for FoldX BuildModel with 3D repacking; False for ESM-1v LLR and static heuristics.",
+          "title": "Is Calibrated Free Energy",
+          "type": "boolean"
+        },
+        "ddg_kcal_mol": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Populated ONLY when FoldX all-atom repacking produced calibrated kcal/mol energies.",
+          "title": "Ddg Kcal Mol"
+        },
+        "backend": {
+          "title": "Backend",
+          "type": "string"
+        },
+        "classification": {
+          "enum": [
+            "favorable_or_stabilizing",
+            "neutral",
+            "mildly_destabilizing",
+            "strongly_destabilizing"
+          ],
+          "title": "Classification",
+          "type": "string"
+        },
+        "sasa_burial": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Sasa Burial",
+          "type": "number"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mutation",
+        "chain_id",
+        "auth_seq_id",
+        "wildtype",
+        "mutant",
+        "score_value",
+        "score_unit",
+        "is_calibrated_free_energy",
+        "backend",
+        "classification",
+        "sasa_burial",
+        "rationale"
+      ],
+      "title": "VariantScore",
+      "type": "object"
+    },
+    "ViewerOverlaySpec": {
+      "description": "Generated 3D overlay file paths and categorical residue lists.",
+      "properties": {
+        "pymol_script_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pymol Script Path"
+        },
+        "risk_pdb_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Risk Pdb Path"
+        },
+        "ngl_viewer_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ngl Viewer Path"
+        },
+        "molstar_sidecar_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Molstar Sidecar Path"
+        },
+        "color_legend": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Color Legend",
+          "type": "object"
+        },
+        "red_hotspot_residues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Red Hotspot Residues",
+          "type": "array"
+        },
+        "blue_core_residues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blue Core Residues",
+          "type": "array"
+        },
+        "destabilized_residues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Destabilized Residues",
+          "type": "array"
+        }
+      },
+      "title": "ViewerOverlaySpec",
+      "type": "object"
+    }
+  },
+  "description": "Root JSON report schema for biophys-guard developability analysis.",
+  "properties": {
+    "schema_version": {
+      "default": "2.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool": {
+      "default": "biophys-guard",
+      "title": "Tool",
+      "type": "string"
+    },
+    "generated_at_utc": {
+      "title": "Generated At Utc",
+      "type": "string"
+    },
+    "input_file": {
+      "title": "Input File",
+      "type": "string"
+    },
+    "structure_format": {
+      "enum": [
+        "pdb",
+        "mmcif"
+      ],
+      "title": "Structure Format",
+      "type": "string"
+    },
+    "detected_model_source": {
+      "enum": [
+        "AlphaFold",
+        "ESMFold",
+        "ImmuneBuilder",
+        "RFdiffusion",
+        "Experimental",
+        "Unknown"
+      ],
+      "title": "Detected Model Source",
+      "type": "string"
+    },
+    "is_backbone_only": {
+      "title": "Is Backbone Only",
+      "type": "boolean"
+    },
+    "sidechain_completeness": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Sidechain Completeness",
+      "type": "number"
+    },
+    "chain_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Chain Ids",
+      "type": "array"
+    },
+    "residue_count": {
+      "minimum": 1,
+      "title": "Residue Count",
+      "type": "integer"
+    },
+    "atom_count": {
+      "minimum": 1,
+      "title": "Atom Count",
+      "type": "integer"
+    },
+    "sequence_by_chain": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Sequence By Chain",
+      "type": "object"
+    },
+    "config": {
+      "$ref": "#/$defs/BiophysGuardConfig"
+    },
+    "verdict": {
+      "$ref": "#/$defs/DevelopabilityVerdict"
+    },
+    "sap_metrics": {
+      "$ref": "#/$defs/SAPMetrics"
+    },
+    "charge_metrics": {
+      "$ref": "#/$defs/ChargeMetrics"
+    },
+    "stability_metrics": {
+      "$ref": "#/$defs/StabilityMetrics"
+    },
+    "residues": {
+      "items": {
+        "$ref": "#/$defs/ResidueRiskProfile"
+      },
+      "title": "Residues",
+      "type": "array"
+    },
+    "viewer_overlays": {
+      "$ref": "#/$defs/ViewerOverlaySpec"
+    }
+  },
+  "required": [
+    "generated_at_utc",
+    "input_file",
+    "structure_format",
+    "detected_model_source",
+    "is_backbone_only",
+    "sidechain_completeness",
+    "chain_ids",
+    "residue_count",
+    "atom_count",
+    "sequence_by_chain",
+    "config",
+    "verdict",
+    "sap_metrics",
+    "charge_metrics",
+    "stability_metrics",
+    "residues",
+    "viewer_overlays"
+  ],
+  "title": "BiophysGuardReport",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://biophys-guard.local/schemas/biophys_guard_report.schema.json"
+}
